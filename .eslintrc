@@ -1,0 +1,11 @@
+{
+  "env": {
+    "mocha": true,
+    "node": true
+  },
+  "extends": "standard",
+  "plugins": [
+    "standard",
+    "promise"
+  ]
+}
