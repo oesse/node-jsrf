@@ -4,7 +4,7 @@
   "description": "Refactorings for javascript",
   "main": "lib",
   "bin": {
-    "jsr": "./bin/jsr.js"
+    "jsrf": "./bin/jsrf.js"
   },
   "scripts": {
     "build": "babel src -d lib",

@@ -1,5 +1,6 @@
-# vim-jsr
+# jsrf
 [![Build Status](https://travis-ci.org/oesse/node-jsrf.svg?branch=master)](https://travis-ci.org/oesse/node-jsrf)
+[![npm version](https://badge.fury.io/js/jsrf.svg)](https://badge.fury.io/js/jsrf)
 
 Refactorings for javascript.
 
