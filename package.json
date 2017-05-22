@@ -1,7 +1,7 @@
 {
-  "name": "jsr",
+  "name": "jsrf",
   "version": "1.0.0-alpha",
-  "description": "Refactorings for javascript in vim",
+  "description": "Refactorings for javascript",
   "main": "lib",
   "bin": {
     "jsr": "./bin/jsr.js"
@@ -11,11 +11,12 @@
     "lint": "eslint ./src",
     "lintfix": "eslint --fix ./src",
     "postinstall": "npm run build",
+    "prepublish": "npm run build",
     "test": "mocha"
   },
   "author": "Oliver Esser",
   "license": "ISC",
-  "repository": "oesse/node-jsr",
+  "repository": "oesse/node-jsrf",
   "dependencies": {
     "acorn": "^5.0.3",
     "acorn-es7-plugin": "^1.1.7"
