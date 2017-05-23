@@ -7,11 +7,9 @@
     "jsrf": "./bin/jsrf.js"
   },
   "scripts": {
-    "build": "babel src -d lib",
     "lint": "eslint ./src",
     "lintfix": "eslint --fix ./src",
-    "postinstall": "npm run build",
-    "prepublish": "npm run build",
+    "prepare": "babel src -d lib",
     "test": "mocha"
   },
   "author": "Oliver Esser",
