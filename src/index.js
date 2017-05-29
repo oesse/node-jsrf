@@ -40,11 +40,16 @@ export function parse (sourceCode) {
   return ast
 }
 
-export function extractVariableFromRange (sourceCode, charRange, varName) {
+function parseCallStack (sourceCode, charRange) {
   const [start, end] = charRange
   const stack = nodeStackOfExpression(parse(sourceCode), start, end)
   const enclIdx = stack.findIndex(node => !!node.body)
   const attachedAt = stack[enclIdx].body.find(node => node === stack[enclIdx - 1])
+  return { stack, attachedAt }
+}
+
+export function extractVariableFromRange (sourceCode, charRange, varName) {
+  const { stack, attachedAt } = parseCallStack(sourceCode, charRange)
 
   const exprLocation = stack[0].loc
 
@@ -65,20 +70,22 @@ export function extractVariableFromRange (sourceCode, charRange, varName) {
   ]
 }
 
+function splitProperties (properties, sourceCode) {
+  return properties.map(property => sourceCode.slice(property.start, property.end))
+}
+
 export function expandObject (sourceCode, charRange) {
-  const [start, end] = charRange
-  const ast = parse(sourceCode)
-  const stack = nodeStackOfExpression(ast, start, end)
-  const enclIdx = stack.findIndex(node => !!node.body)
-  const attachedAt = stack[enclIdx].body.find(node => node === stack[enclIdx - 1])
+  const { stack, attachedAt } = parseCallStack(sourceCode, charRange)
 
   const [objectExpression] = stack
 
   const columnOffset = attachedAt.loc.start.column
   const paddSpace = ' '.repeat(columnOffset)
-  const keys = objectExpression.properties.map(property =>
-    paddSpace + '  ' + sourceCode.slice(property.start, property.end)
-  )
+  const keys = splitProperties(
+    objectExpression.properties,
+    sourceCode
+  ).map(p => paddSpace + '  ' + p)
+
   const expandedObject = ['{', ...keys, paddSpace + '}'].join('\n')
 
   return {
