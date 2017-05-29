@@ -64,3 +64,26 @@ export function extractVariableFromRange (sourceCode, charRange, varName) {
     }
   ]
 }
+
+export function expandObject (sourceCode, charRange) {
+  const [start, end] = charRange
+  const ast = parse(sourceCode)
+  const stack = nodeStackOfExpression(ast, start, end)
+  const enclIdx = stack.findIndex(node => !!node.body)
+  const attachedAt = stack[enclIdx].body.find(node => node === stack[enclIdx - 1])
+
+  const [objectExpression] = stack
+
+  const columnOffset = attachedAt.loc.start.column
+  const paddSpace = ' '.repeat(columnOffset)
+  const keys = objectExpression.properties.map(property =>
+    paddSpace + '  ' + sourceCode.slice(property.start, property.end)
+  )
+  const expandedObject = ['{', ...keys, paddSpace + '}'].join('\n')
+
+  return {
+    line: [objectExpression.loc.start.line, objectExpression.loc.end.line],
+    column: [objectExpression.loc.start.column, objectExpression.loc.end.column],
+    code: expandedObject
+  }
+}
