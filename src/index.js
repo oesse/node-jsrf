@@ -85,8 +85,9 @@ export function expandObject (sourceCode, charRange) {
     objectExpression.properties,
     sourceCode
   ).map(p => paddSpace + '  ' + p)
+  const separatedKeys = [...keys.slice(0, -1).map(k => k + ','), keys[keys.length - 1]]
 
-  const expandedObject = ['{', ...keys, paddSpace + '}'].join('\n')
+  const expandedObject = ['{', ...separatedKeys, paddSpace + '}'].join('\n')
 
   return {
     line: [objectExpression.loc.start.line, objectExpression.loc.end.line],
