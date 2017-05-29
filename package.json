@@ -17,7 +17,8 @@
   "repository": "oesse/node-jsrf",
   "dependencies": {
     "acorn": "^5.0.3",
-    "acorn-es7-plugin": "^1.1.7"
+    "acorn-es7-plugin": "^1.1.7",
+    "babel-polyfill": "^6.23.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
