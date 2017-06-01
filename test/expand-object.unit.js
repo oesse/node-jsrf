@@ -1,5 +1,6 @@
-import { expandObject } from '../src'
 import { expect } from 'chai'
+
+import { expandObject } from '../src/expand-object'
 
 describe('expandObject', () => {
   it('returns change set with line and column range and replacement code', () => {

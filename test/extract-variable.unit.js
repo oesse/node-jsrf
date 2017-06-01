@@ -1,5 +1,6 @@
-import { extractVariableFromRange } from '../src'
 import { expect } from 'chai'
+
+import { extractVariableFromRange } from '../src/extract-variable'
 
 describe('extractVariableFromRange', () => {
   context('with range inside function parameter', () => {
