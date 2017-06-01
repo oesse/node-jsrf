@@ -1,4 +1,4 @@
-import { extractVariableFromRange, expandObject } from './'
+import { extractVariable, expandObject } from './'
 
 function readFromStdin () {
   let data = ''
@@ -27,7 +27,7 @@ export default async function () {
     const varName = argv[3]
     const sourceCode = await readFromStdin()
 
-    const diffs = extractVariableFromRange(sourceCode, [start, end], varName)
+    const diffs = extractVariable(sourceCode, [start, end], varName)
     console.log(JSON.stringify(diffs))
     return
   }

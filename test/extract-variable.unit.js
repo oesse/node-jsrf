@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 
-import { extractVariableFromRange } from '../src/extract-variable'
+import { extractVariable } from '../src/extract-variable'
 
-describe('extractVariableFromRange', () => {
+describe('extractVariable', () => {
   context('with range inside function parameter', () => {
     const sourceCode = 'doImportantStuff(1, a + b)'
     const charRange = [20, 25]
 
     it('returns change sets defining const variable with expression from range', () => {
-      const [ diff1, diff2 ] = extractVariableFromRange(sourceCode, charRange, 'varName')
+      const [ diff1, diff2 ] = extractVariable(sourceCode, charRange, 'varName')
 
       expect(diff1).to.eql({ line: [1, 1], column: [20, 25], code: 'varName' })
       expect(diff2).to.eql({ line: [1, 1], column: [0, 0], code: 'const varName = a + b\n' })
@@ -20,7 +20,7 @@ describe('extractVariableFromRange', () => {
     const charRange = [42, 47]
 
     it('puts variable declaration just before usage', () => {
-      const [ diff1, diff2 ] = extractVariableFromRange(sourceCode, charRange, 'varName')
+      const [ diff1, diff2 ] = extractVariable(sourceCode, charRange, 'varName')
 
       expect(diff1).to.eql({
         line: [2, 2],
@@ -36,7 +36,7 @@ describe('extractVariableFromRange', () => {
     const charRange = [54, 59]
 
     it('puts variable declaration just before usage', () => {
-      const [ diff1, diff2 ] = extractVariableFromRange(sourceCode, charRange, 'varName')
+      const [ diff1, diff2 ] = extractVariable(sourceCode, charRange, 'varName')
 
       expect(diff1).to.eql({
         line: [2, 2],

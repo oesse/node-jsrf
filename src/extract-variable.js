@@ -1,6 +1,6 @@
 import { parseCallStack } from './parse'
 
-export function extractVariableFromRange (sourceCode, charRange, varName) {
+export function extractVariable (sourceCode, charRange, varName) {
   const { stack, attachedAt } = parseCallStack(sourceCode, charRange)
 
   const exprLocation = stack[0].loc
