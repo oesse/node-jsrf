@@ -38,4 +38,12 @@ describe('collapse', () => {
 
     expect(diff).to.have.property('code', '{ a: \'a\', b: \'b\' }')
   })
+
+  it('collapses closest enclosing object literal', () => {
+    const sourceCode = 'const foo = {\n  a: \'a\',\n  b: \'b\'\n}'
+    const charRange = [22, 22]
+    const diff = collapseObject(sourceCode, charRange)
+
+    expect(diff).to.have.property('code', '{ a: \'a\', b: \'b\' }')
+  })
 })

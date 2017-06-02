@@ -47,3 +47,7 @@ function nodeStackOfExpression (ast, start, end) {
   found.ancestors.reverse()
   return found.ancestors
 }
+
+export function splitProperties (properties, sourceCode) {
+  return properties.map(property => sourceCode.slice(property.start, property.end))
+}

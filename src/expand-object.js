@@ -1,8 +1,4 @@
-import { parseCallStack } from './parse'
-
-function splitProperties (properties, sourceCode) {
-  return properties.map(property => sourceCode.slice(property.start, property.end))
-}
+import { parseCallStack, splitProperties } from './parse'
 
 export function expandObject (sourceCode, charRange) {
   const { stack, attachedAt } = parseCallStack(sourceCode, charRange)

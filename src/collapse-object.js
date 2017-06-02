@@ -1,12 +1,9 @@
-import { parseCallStack } from './parse'
-
-function splitProperties (properties, sourceCode) {
-  return properties.map(property => sourceCode.slice(property.start, property.end))
-}
+import { parseCallStack, splitProperties } from './parse'
 
 export function collapseObject (sourceCode, charRange) {
   const { stack } = parseCallStack(sourceCode, charRange)
-  const [objectExpression] = stack
+
+  const objectExpression = stack.find(node => node.type === 'ObjectExpression')
 
   const collapsedCode = `{ ${splitProperties(objectExpression.properties, sourceCode).join(', ')} }`
 
