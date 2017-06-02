@@ -20,11 +20,10 @@ function readFromStdin () {
 }
 
 export default async function () {
-  const argv = process.argv.slice(2)
-  const [mode, start, end] = argv
+  const [mode, start, end, ...rest] = process.argv.slice(2)
 
   if (mode === 'extract-variable') {
-    const varName = argv[3]
+    const [varName] = rest
     const sourceCode = await readFromStdin()
 
     const diffs = extractVariable(sourceCode, [start, end], varName)
