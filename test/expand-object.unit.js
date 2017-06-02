@@ -32,4 +32,12 @@ describe('expandObject', () => {
 
     expect(diff).to.have.property('code', '{\n  a: \'a\',\n  b: \'b\'\n}')
   })
+
+  it('expands closest enclosing object literal', () => {
+    const sourceCode = 'const foo = { a: \'a\', b: \'b\' }'
+    const charRange = [17, 17]
+    const diff = expandObject(sourceCode, charRange)
+
+    expect(diff).to.have.property('code', '{\n  a: \'a\',\n  b: \'b\'\n}')
+  })
 })

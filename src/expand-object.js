@@ -7,7 +7,7 @@ function splitProperties (properties, sourceCode) {
 export function expandObject (sourceCode, charRange) {
   const { stack, attachedAt } = parseCallStack(sourceCode, charRange)
 
-  const [objectExpression] = stack
+  const objectExpression = stack.find(node => node.type === 'ObjectExpression')
 
   const columnOffset = attachedAt.loc.start.column
   const paddSpace = ' '.repeat(columnOffset)
