@@ -1,4 +1,4 @@
-import { extractVariable, expandObject } from './'
+import { extractVariable, expandObject, collapseObject } from './'
 
 function readFromStdin () {
   let data = ''
@@ -36,6 +36,14 @@ export default async function () {
     const sourceCode = await readFromStdin()
 
     const diff = expandObject(sourceCode, [start, end])
+    console.log(JSON.stringify([diff]))
+    return
+  }
+
+  if (mode === 'collapse-object') {
+    const sourceCode = await readFromStdin()
+
+    const diff = collapseObject(sourceCode, [start, end])
     console.log(JSON.stringify([diff]))
     return
   }
