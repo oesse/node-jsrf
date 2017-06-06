@@ -1,3 +1,3 @@
 export { extractVariable } from './extract-variable'
-export { expandObject } from './expand-object'
+export { expand } from './expand'
 export { collapseObject } from './collapse-object'

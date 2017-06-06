@@ -1,4 +1,4 @@
-import { extractVariable, expandObject, collapseObject } from './'
+import { extractVariable, expand, collapseObject } from './'
 
 function readFromStdin () {
   let data = ''
@@ -23,7 +23,7 @@ export default async function () {
   const [mode, start, end, ...rest] = process.argv.slice(2)
 
   if (mode === 'extract-variable') {
-    const [varName] = rest
+    const varName = rest[0]
     const sourceCode = await readFromStdin()
 
     const diffs = extractVariable(sourceCode, [start, end], varName)
@@ -34,7 +34,7 @@ export default async function () {
   if (mode === 'expand-object') {
     const sourceCode = await readFromStdin()
 
-    const diff = expandObject(sourceCode, [start, end])
+    const diff = expand(sourceCode, [start, end])
     console.log(JSON.stringify([diff]))
     return
   }

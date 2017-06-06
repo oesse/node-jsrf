@@ -1,7 +1,9 @@
 import { parseCallStack, splitProperties } from './parse'
 
 function isExpandable (node) {
-  return node.type === 'ObjectExpression' || node.type === 'ArrayExpression'
+  return node.type === 'ObjectExpression' ||
+    node.type === 'ArrayExpression' ||
+    node.type === 'CallExpression'
 }
 
 function expressionRange (expr) {
@@ -23,16 +25,20 @@ function getElements (expression) {
   if (expression.type === 'ObjectExpression') {
     return expression.properties
   }
-  return expression.elements
+  if (expression.type === 'ArrayExpression') {
+    return expression.elements
+  }
+  return expression.arguments
 }
 
-function expandElements (expression, sourcecode) {
+function expandElements (expression, sourceCode) {
   const delimiters = {
     ObjectExpression: ['{', '}'],
-    ArrayExpression: ['[', ']']
+    ArrayExpression: ['[', ']'],
+    CallExpression: ['(', ')']
   }
   const [leftDelim, rightDelim] = delimiters[expression.type]
-  const keys = splitProperties(getElements(expression), sourcecode)
+  const keys = splitProperties(getElements(expression), sourceCode)
   return [leftDelim, ...paddedCommaList(2, keys), rightDelim]
 }
 
@@ -46,8 +52,17 @@ export function expand (sourceCode, charRange) {
   const padding = ' '.repeat(columnOffset)
   const code = [elements[0], ...elements.slice(1).map(e => `${padding}${e}`)].join('\n')
 
+  const changeLocation = expressionRange(expandableExpression)
+
+  if (expandableExpression.type === 'CallExpression') {
+    // Arguments start right after callee identifier.
+    const { line, column } = expandableExpression.callee.loc.end
+    changeLocation.line[0] = line
+    changeLocation.column[0] = column
+  }
+
   return {
-    ...expressionRange(expandableExpression),
+    ...changeLocation,
     code
   }
 }

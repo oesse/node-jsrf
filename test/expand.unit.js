@@ -62,4 +62,26 @@ describe('expand', () => {
       expect(diff.code).to.eql('[\n  a,\n  b\n]')
     })
   })
+
+  context('a function argument list', () => {
+    it('puts single argument on a line of its own', () => {
+      const sourceCode = 'const foo = bar(baz)'
+      const charRange = [15, 15]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([15, 20])
+      expect(diff.code).to.eql('(\n  baz\n)')
+    })
+
+    it('puts multiple arguments each on a line of their own', () => {
+      const sourceCode = 'const foo = bar(a, b)'
+      const charRange = [15, 15]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([15, 21])
+      expect(diff.code).to.eql('(\n  a,\n  b\n)')
+    })
+  })
 })
