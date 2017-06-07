@@ -40,7 +40,7 @@ describe('expand', () => {
       expect(diff.code).to.eql('{\n  a: \'a\',\n  b: \'b\'\n}')
     })
 
-    it('respects indentation of enclosing node', () => {
+    it('indents expansion correctly when literal starts on its own line', () => {
       const sourceCode = 'foo(\n  { a: \'a\' }\n)'
       const charRange = [8, 8]
       const diff = expand(sourceCode, charRange)
@@ -70,6 +70,16 @@ describe('expand', () => {
       expect(diff.line).to.eql([1, 1])
       expect(diff.column).to.eql([12, 20])
       expect(diff.code).to.eql('[\n  a,\n  b\n]')
+    })
+
+    it('respects the indentation of the enclosing entity', () => {
+      const sourceCode = 'foo({\n  a: [1, 2, 3]\n})'
+      const charRange = [12, 12]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([2, 2])
+      expect(diff.column).to.eql([5, 14])
+      expect(diff.code).to.eql('[\n    1,\n    2,\n    3\n  ]')
     })
   })
 

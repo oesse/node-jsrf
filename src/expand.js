@@ -42,12 +42,22 @@ function expandElements (expression, sourceCode) {
   return [leftDelim, ...paddedCommaList(2, keys), rightDelim]
 }
 
-function getColumnOffset (stack, idx, attachedAt) {
+function getColumnOffset (stack, idx) {
   // if list starts on a line of its own, it has its own indentation level
-  if (stack[idx].loc.start.line !== stack[idx + 1].loc.start.line) {
-    return stack[idx].loc.start.column
+  const line = stack[idx].loc.start.line
+  const attachedIdx = stack.slice(idx).findIndex(node => node.loc.start.line < line) + idx - 1
+
+  if (attachedIdx < 0) {
+    return null
   }
-  return attachedAt.loc.start.column
+
+  const location = stack[attachedIdx].loc
+  // first line means indentation of root node
+  if (location.start.line === 1) {
+    return null
+  }
+
+  return location.start.column
 }
 
 export function expand (sourceCode, charRange) {
@@ -56,7 +66,7 @@ export function expand (sourceCode, charRange) {
   const idx = stack.findIndex(isExpandable)
   const expandableExpression = stack[idx]
 
-  const columnOffset = getColumnOffset(stack, idx, attachedAt)
+  const columnOffset = getColumnOffset(stack, idx) || attachedAt.loc.start.column
 
   const elements = expandElements(expandableExpression, sourceCode)
   const padding = ' '.repeat(columnOffset)
