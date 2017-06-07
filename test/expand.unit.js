@@ -39,6 +39,16 @@ describe('expand', () => {
 
       expect(diff.code).to.eql('{\n  a: \'a\',\n  b: \'b\'\n}')
     })
+
+    it('respects indentation of enclosing node', () => {
+      const sourceCode = 'foo(\n  { a: \'a\' }\n)'
+      const charRange = [8, 8]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([2, 2])
+      expect(diff.column).to.eql([2, 12])
+      expect(diff.code).to.eql('{\n    a: \'a\'\n  }')
+    })
   })
 
   context('an array literal', () => {

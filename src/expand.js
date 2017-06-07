@@ -42,11 +42,21 @@ function expandElements (expression, sourceCode) {
   return [leftDelim, ...paddedCommaList(2, keys), rightDelim]
 }
 
+function getColumnOffset (stack, idx, attachedAt) {
+  // if list starts on a line of its own, it has its own indentation level
+  if (stack[idx].loc.start.line !== stack[idx + 1].loc.start.line) {
+    return stack[idx].loc.start.column
+  }
+  return attachedAt.loc.start.column
+}
+
 export function expand (sourceCode, charRange) {
   const { stack, attachedAt } = parseCallStack(sourceCode, charRange)
 
-  const columnOffset = attachedAt.loc.start.column
-  const expandableExpression = stack.find(isExpandable)
+  const idx = stack.findIndex(isExpandable)
+  const expandableExpression = stack[idx]
+
+  const columnOffset = getColumnOffset(stack, idx, attachedAt)
 
   const elements = expandElements(expandableExpression, sourceCode)
   const padding = ' '.repeat(columnOffset)
