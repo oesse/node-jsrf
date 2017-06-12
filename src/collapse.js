@@ -1,4 +1,4 @@
-import { parseCallStack, splitProperties } from './parse'
+import { parseCallStack, splitProperties, getExpressionRange } from './parse'
 import { isListExpression, getElements, getDelimiters } from './lists'
 
 export function collapse (sourceCode, charRange) {
@@ -10,8 +10,7 @@ export function collapse (sourceCode, charRange) {
   const collapsedCode = `${left} ${splitProperties(getElements(expression), sourceCode).join(', ')} ${right}`
 
   return {
-    line: [expression.loc.start.line, expression.loc.end.line],
-    column: [expression.loc.start.column, expression.loc.end.column],
+    ...getExpressionRange(expression),
     code: collapsedCode
   }
 }
