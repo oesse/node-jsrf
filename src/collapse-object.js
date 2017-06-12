@@ -1,15 +1,17 @@
 import { parseCallStack, splitProperties } from './parse'
+import { isListExpression, getElements, getDelimiters } from './lists'
 
 export function collapseObject (sourceCode, charRange) {
   const { stack } = parseCallStack(sourceCode, charRange)
 
-  const objectExpression = stack.find(node => node.type === 'ObjectExpression')
+  const expression = stack.find(isListExpression)
 
-  const collapsedCode = `{ ${splitProperties(objectExpression.properties, sourceCode).join(', ')} }`
+  const [left, right] = getDelimiters(expression)
+  const collapsedCode = `${left} ${splitProperties(getElements(expression), sourceCode).join(', ')} ${right}`
 
   return {
-    line: [objectExpression.loc.start.line, objectExpression.loc.end.line],
-    column: [objectExpression.loc.start.column, objectExpression.loc.end.column],
+    line: [expression.loc.start.line, expression.loc.end.line],
+    column: [expression.loc.start.column, expression.loc.end.column],
     code: collapsedCode
   }
 }
