@@ -31,7 +31,7 @@ export default async function () {
     return
   }
 
-  if (mode === 'expand-object') {
+  if (mode === 'expand') {
     const sourceCode = await readFromStdin()
 
     const diff = expand(sourceCode, [start, end])
