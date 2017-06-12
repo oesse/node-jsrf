@@ -1,7 +1,7 @@
 import { parseCallStack, splitProperties } from './parse'
 import { isListExpression, getElements, getDelimiters } from './lists'
 
-export function collapseObject (sourceCode, charRange) {
+export function collapse (sourceCode, charRange) {
   const { stack } = parseCallStack(sourceCode, charRange)
 
   const expression = stack.find(isListExpression)

@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 
-import { collapseObject } from '../src/collapse-object'
+import { collapse } from '../src/collapse'
 
 describe('collapse', () => {
   it('returns change set with line and column range and replacement code', () => {
     const sourceCode = 'const foo = {\n  a: \'a\'\n}'
     const charRange = [12, 12]
-    const diff = collapseObject(sourceCode, charRange)
+    const diff = collapse(sourceCode, charRange)
 
     expect(diff)
       .to.have.property('line')
@@ -25,7 +25,7 @@ describe('collapse', () => {
     it('puts the object literal on a single line', () => {
       const sourceCode = 'const foo = {\n  a: \'a\'\n}'
       const charRange = [12, 12]
-      const diff = collapseObject(sourceCode, charRange)
+      const diff = collapse(sourceCode, charRange)
 
       expect(diff.line).to.eql([1, 3])
       expect(diff.column).to.eql([12, 1])
@@ -35,7 +35,7 @@ describe('collapse', () => {
     it('puts multiple properties on a single line', () => {
       const sourceCode = 'const foo = {\n a: \'a\',\n b: \'b\'\n}'
       const charRange = [12, 12]
-      const diff = collapseObject(sourceCode, charRange)
+      const diff = collapse(sourceCode, charRange)
 
       expect(diff).to.have.property('code', '{ a: \'a\', b: \'b\' }')
     })
@@ -43,7 +43,7 @@ describe('collapse', () => {
     it('collapses closest enclosing object literal', () => {
       const sourceCode = 'const foo = {\n  a: \'a\',\n  b: \'b\'\n}'
       const charRange = [22, 22]
-      const diff = collapseObject(sourceCode, charRange)
+      const diff = collapse(sourceCode, charRange)
 
       expect(diff).to.have.property('code', '{ a: \'a\', b: \'b\' }')
     })
@@ -53,7 +53,7 @@ describe('collapse', () => {
     it('puts the array literal on a single line', () => {
       const sourceCode = 'const foo = [\n  a\n]'
       const charRange = [12, 12]
-      const diff = collapseObject(sourceCode, charRange)
+      const diff = collapse(sourceCode, charRange)
 
       expect(diff.line).to.eql([1, 3])
       expect(diff.column).to.eql([12, 1])
