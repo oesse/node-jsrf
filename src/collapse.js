@@ -7,10 +7,21 @@ export function collapse (sourceCode, charRange) {
   const expression = stack.find(isListExpression)
 
   const [left, right] = getDelimiters(expression)
-  const collapsedCode = `${left} ${splitProperties(getElements(expression), sourceCode).join(', ')} ${right}`
+  const elements = splitProperties(getElements(expression), sourceCode).join(', ')
+  let collapsedCode = `${left} ${elements} ${right}`
+
+  const changeLocation = getExpressionRange(expression)
+  if (expression.type === 'CallExpression') {
+    // Arguments start right after callee identifier.
+    const { line, column } = expression.callee.loc.end
+    changeLocation.line[0] = line
+    changeLocation.column[0] = column
+
+    collapsedCode = `${left}${elements}${right}`
+  }
 
   return {
-    ...getExpressionRange(expression),
+    ...changeLocation,
     code: collapsedCode
   }
 }

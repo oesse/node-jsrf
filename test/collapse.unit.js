@@ -59,5 +59,37 @@ describe('collapse', () => {
       expect(diff.column).to.eql([12, 1])
       expect(diff.code).to.eql('[ a ]')
     })
+
+    it('puts multiple elements on a single line', () => {
+      const sourceCode = 'const foo = [\n  a,\n  b\n]'
+      const charRange = [12, 12]
+      const diff = collapse(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 4])
+      expect(diff.column).to.eql([12, 1])
+      expect(diff.code).to.eql('[ a, b ]')
+    })
+  })
+
+  context('a function argument list', () => {
+    it('puts a single argument on the same line as the parens', () => {
+      const sourceCode = 'foo(\n  a\n)'
+      const charRange = [3, 3]
+      const diff = collapse(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 3])
+      expect(diff.column).to.eql([3, 1])
+      expect(diff.code).to.eql('(a)')
+    })
+
+    it('puts multiple arguments on a single line', () => {
+      const sourceCode = 'foo(\n  a,\n  b\n)'
+      const charRange = [3, 3]
+      const diff = collapse(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 4])
+      expect(diff.column).to.eql([3, 1])
+      expect(diff.code).to.eql('(a, b)')
+    })
   })
 })
