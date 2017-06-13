@@ -1,4 +1,4 @@
-import { parseCallStack, splitProperties, getExpressionRange } from './parse'
+import { parseCallStack, getExpressionRange } from './parse'
 import { isListExpression, getElements, getDelimiters } from './lists'
 
 function paddedCommaList (offset, list) {
@@ -11,7 +11,7 @@ function paddedCommaList (offset, list) {
 
 function expandElements (expression, sourceCode) {
   const [leftDelim, rightDelim] = getDelimiters(expression)
-  const keys = splitProperties(getElements(expression), sourceCode)
+  const keys = getElements(expression, sourceCode)
   return [leftDelim, ...paddedCommaList(2, keys), rightDelim]
 }
 

@@ -4,7 +4,12 @@ export function isListExpression (node) {
     node.type === 'CallExpression'
 }
 
-export function getElements (expression) {
+export function getElements (expression, sourceCode) {
+  return getElementProperty(expression)
+    .map(property => sourceCode.slice(property.start, property.end))
+}
+
+export function getElementProperty (expression) {
   if (expression.type === 'ObjectExpression') {
     return expression.properties
   }

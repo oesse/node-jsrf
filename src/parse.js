@@ -48,10 +48,6 @@ function nodeStackOfExpression (ast, start, end) {
   return found.ancestors
 }
 
-export function splitProperties (properties, sourceCode) {
-  return properties.map(property => sourceCode.slice(property.start, property.end))
-}
-
 export function getExpressionRange (expr) {
   return {
     line: [expr.loc.start.line, expr.loc.end.line],

@@ -1,4 +1,4 @@
-import { parseCallStack, splitProperties, getExpressionRange } from './parse'
+import { parseCallStack, getExpressionRange } from './parse'
 import { isListExpression, getElements, getDelimiters } from './lists'
 
 export function collapse (sourceCode, charRange) {
@@ -7,7 +7,7 @@ export function collapse (sourceCode, charRange) {
   const expression = stack.find(isListExpression)
 
   const [left, right] = getDelimiters(expression)
-  const elements = splitProperties(getElements(expression), sourceCode).join(', ')
+  const elements = getElements(expression, sourceCode).join(', ')
   let collapsedCode = `${left} ${elements} ${right}`
 
   const changeLocation = getExpressionRange(expression)
