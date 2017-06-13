@@ -7,8 +7,13 @@ export function isListExpression (node) {
     node.type === 'ImportDeclaration'
 }
 
+function isNamedImport (importNode) {
+  return importNode.type !== 'ImportDefaultSpecifier'
+}
+
 export function getElements (expression, sourceCode) {
   return getElementProperty(expression)
+    .filter(isNamedImport)
     .map(property => sourceCode.slice(property.start, property.end))
 }
 
@@ -45,6 +50,13 @@ export function getListLocation (expression) {
     changeLocation.line[0] = line
     changeLocation.column[0] = column
   } else if (expression.type === 'ImportDeclaration') {
+    if (expression.specifiers[0].type === 'ImportDefaultSpecifier') {
+      // import default, { named, imports }
+      const loc = expression.specifiers[0].loc
+      const importLength = loc.end.column - loc.start.column
+      // ',' + space = 2 characters
+      changeLocation.column[0] += importLength + 2
+    }
     // dirty hack: assume 'import {...list} from module'
     // 'import' + space = 7 characters
     changeLocation.column[0] += 7

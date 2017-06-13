@@ -115,5 +115,15 @@ describe('expand', () => {
       expect(diff.column).to.eql([7, 14])
       expect(diff.code).to.eql('{\n  foo\n}')
     })
+
+    it('leaves default import as it is', () => {
+      const sourceCode = 'import def, { foo } from \'module\''
+      const charRange = [12, 12]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([12, 19])
+      expect(diff.code).to.eql('{\n  foo\n}')
+    })
   })
 })
