@@ -104,4 +104,16 @@ describe('expand', () => {
       expect(diff.code).to.eql('(\n  a,\n  b\n)')
     })
   })
+
+  context('an import statement', () => {
+    it('puts import on a line of its own', () => {
+      const sourceCode = 'import { foo } from \'module\''
+      const charRange = [7, 7]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([7, 14])
+      expect(diff.code).to.eql('{\n  foo\n}')
+    })
+  })
 })

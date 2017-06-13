@@ -16,7 +16,8 @@ export function parse (sourceCode) {
 
 export function parseCallStack (sourceCode, charRange) {
   const [start, end] = charRange
-  const stack = nodeStackOfExpression(parse(sourceCode), start, end)
+  const ast = parse(sourceCode)
+  const stack = nodeStackOfExpression(ast, start, end)
   const enclIdx = stack.findIndex(node => !!node.body)
   const attachedAt = stack[enclIdx].body.find(node => node === stack[enclIdx - 1])
   return { stack, attachedAt }
@@ -39,7 +40,8 @@ function nodeStackOfExpression (ast, start, end) {
     return visitor
   }
 
-  const visitor = makeVisitor(['Expression'], start, end)
+  const typesToVisit = ['Expression', 'ImportDeclaration']
+  const visitor = makeVisitor(typesToVisit, start, end)
 
   const found = {}
   walk.ancestor(ast, visitor, walk.base, found)
