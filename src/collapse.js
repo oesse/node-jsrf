@@ -1,5 +1,5 @@
-import { parseCallStack, getExpressionRange } from './parse'
-import { isListExpression, getElements, getDelimiters } from './lists'
+import { parseCallStack } from './parse'
+import { isListExpression, getElements, getDelimiters, getListRange } from './lists'
 
 export function collapse (sourceCode, charRange) {
   const { stack } = parseCallStack(sourceCode, charRange)
@@ -10,13 +10,9 @@ export function collapse (sourceCode, charRange) {
   const elements = getElements(expression, sourceCode).join(', ')
   let collapsedCode = `${left} ${elements} ${right}`
 
-  const changeLocation = getExpressionRange(expression)
-  if (expression.type === 'CallExpression') {
-    // Arguments start right after callee identifier.
-    const { line, column } = expression.callee.loc.end
-    changeLocation.line[0] = line
-    changeLocation.column[0] = column
+  const changeLocation = getListRange(expression)
 
+  if (expression.type === 'CallExpression') {
     collapsedCode = `${left}${elements}${right}`
   }
 

@@ -1,5 +1,5 @@
-import { parseCallStack, getExpressionRange } from './parse'
-import { isListExpression, getElements, getDelimiters } from './lists'
+import { parseCallStack } from './parse'
+import { isListExpression, getElements, getDelimiters, getListRange } from './lists'
 
 function paddedCommaList (offset, list) {
   const padding = ' '.repeat(offset)
@@ -45,14 +45,7 @@ export function expand (sourceCode, charRange) {
   const padding = ' '.repeat(columnOffset)
   const code = [elements[0], ...elements.slice(1).map(e => `${padding}${e}`)].join('\n')
 
-  const changeLocation = getExpressionRange(expandableExpression)
-
-  if (expandableExpression.type === 'CallExpression') {
-    // Arguments start right after callee identifier.
-    const { line, column } = expandableExpression.callee.loc.end
-    changeLocation.line[0] = line
-    changeLocation.column[0] = column
-  }
+  const changeLocation = getListRange(expandableExpression)
 
   return {
     ...changeLocation,
