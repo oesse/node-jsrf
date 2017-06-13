@@ -48,7 +48,7 @@ function nodeStackOfExpression (ast, start, end) {
   return found.ancestors
 }
 
-export function getExpressionRange (expr) {
+export function getExpressionLocation (expr) {
   return {
     line: [expr.loc.start.line, expr.loc.end.line],
     column: [expr.loc.start.column, expr.loc.end.column]

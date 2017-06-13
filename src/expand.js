@@ -1,5 +1,5 @@
 import { parseCallStack } from './parse'
-import { isListExpression, getElements, getDelimiters, getListRange } from './lists'
+import { isListExpression, getElements, getDelimiters, getListLocation } from './lists'
 
 function paddedCommaList (offset, list) {
   const padding = ' '.repeat(offset)
@@ -45,7 +45,7 @@ export function expand (sourceCode, charRange) {
   const padding = ' '.repeat(columnOffset)
   const code = [elements[0], ...elements.slice(1).map(e => `${padding}${e}`)].join('\n')
 
-  const changeLocation = getListRange(expandableExpression)
+  const changeLocation = getListLocation(expandableExpression)
 
   return {
     ...changeLocation,

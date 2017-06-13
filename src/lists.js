@@ -1,4 +1,4 @@
-import { getExpressionRange } from './parse'
+import { getExpressionLocation } from './parse'
 
 export function isListExpression (node) {
   return node.type === 'ObjectExpression' ||
@@ -30,8 +30,8 @@ export function getDelimiters (expression) {
   return delimiters[expression.type]
 }
 
-export function getListRange (expression) {
-  const changeLocation = getExpressionRange(expression)
+export function getListLocation (expression) {
+  const changeLocation = getExpressionLocation(expression)
 
   if (expression.type === 'CallExpression') {
     // Arguments start right after callee identifier.
