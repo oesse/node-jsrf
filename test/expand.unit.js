@@ -116,7 +116,19 @@ describe('expand', () => {
       expect(diff.code).to.eql('{\n  foo\n}')
     })
 
-    it('leaves default import as it is', () => {
+    it.skip('leaves default import as it is', () => {
+      // TODO: This is a failure case which needs an error handling concept.
+      const sourceCode = 'import def from \'module\''
+      const charRange = [7, 7]
+      const diff = expand(sourceCode, charRange)
+
+      // returning a noop changeset is not a great way to do it
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([0, 0])
+      expect(diff.code).to.eql('')
+    })
+
+    it('only expands named exports', () => {
       const sourceCode = 'import def, { foo } from \'module\''
       const charRange = [12, 12]
       const diff = expand(sourceCode, charRange)

@@ -50,9 +50,10 @@ export function getListLocation (expression) {
     changeLocation.line[0] = line
     changeLocation.column[0] = column
   } else if (expression.type === 'ImportDeclaration') {
-    if (expression.specifiers[0].type === 'ImportDefaultSpecifier') {
+    const specifiers = expression.specifiers
+    if (specifiers[0].type === 'ImportDefaultSpecifier') {
       // import default, { named, imports }
-      const loc = expression.specifiers[0].loc
+      const loc = specifiers[0].loc
       const importLength = loc.end.column - loc.start.column
       // ',' + space = 2 characters
       changeLocation.column[0] += importLength + 2
