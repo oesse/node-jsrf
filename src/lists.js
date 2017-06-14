@@ -1,10 +1,51 @@
 import { getExpressionLocation } from './parse'
 
+const listEntities = {
+  ObjectExpression: {
+    delimiters: ['{', '}'],
+    elementProperty: 'properties'
+  },
+  ArrayExpression: {
+    delimiters: ['[', ']'],
+    elementProperty: 'elements'
+  },
+  CallExpression: {
+    delimiters: ['(', ')'],
+    elementProperty: 'arguments',
+    getLocation (expr) {
+      // Arguments start right after callee identifier.
+      const location = getExpressionLocation(expr)
+      const { line, column } = expr.callee.loc.end
+      location.line[0] = line
+      location.column[0] = column
+      return location
+    }
+  },
+  ImportDeclaration: {
+    delimiters: ['{', '}'],
+    elementProperty: 'specifiers',
+    getLocation (expr) {
+      const location = getExpressionLocation(expr)
+      const specifiers = expr.specifiers
+      if (specifiers[0].type === 'ImportDefaultSpecifier') {
+        // import default, { named, imports }
+        const loc = specifiers[0].loc
+        const importLength = loc.end.column - loc.start.column
+        // ',' + space = 2 characters
+        location.column[0] += importLength + 2
+      }
+      // dirty hack: assume 'import {...list} from module'
+      // 'import' + space = 7 characters
+      location.column[0] += 7
+      // space + 'from' + space = 6 characters
+      location.column[1] = expr.source.loc.start.column - 6
+      return location
+    }
+  }
+}
+
 export function isListExpression (node) {
-  return node.type === 'ObjectExpression' ||
-    node.type === 'ArrayExpression' ||
-    node.type === 'CallExpression' ||
-    node.type === 'ImportDeclaration'
+  return typeof listEntities[node.type] !== 'undefined'
 }
 
 function isNamedImport (importNode) {
@@ -18,52 +59,20 @@ export function getElements (expression, sourceCode) {
 }
 
 export function getElementProperty (expression) {
-  if (expression.type === 'ObjectExpression') {
-    return expression.properties
-  }
-  if (expression.type === 'ArrayExpression') {
-    return expression.elements
-  }
-  if (expression.type === 'ImportDeclaration') {
-    return expression.specifiers
-  }
-  // CallExpression
-  return expression.arguments
+  const { elementProperty } = listEntities[expression.type]
+  return expression[elementProperty]
 }
 
 export function getDelimiters (expression) {
-  const delimiters = {
-    ObjectExpression: ['{', '}'],
-    ArrayExpression: ['[', ']'],
-    CallExpression: ['(', ')'],
-    ImportDeclaration: ['{', '}']
-  }
-  return delimiters[expression.type]
+  const { delimiters } = listEntities[expression.type]
+  return delimiters
 }
 
 export function getListLocation (expression) {
-  const changeLocation = getExpressionLocation(expression)
-
-  if (expression.type === 'CallExpression') {
-    // Arguments start right after callee identifier.
-    const { line, column } = expression.callee.loc.end
-    changeLocation.line[0] = line
-    changeLocation.column[0] = column
-  } else if (expression.type === 'ImportDeclaration') {
-    const specifiers = expression.specifiers
-    if (specifiers[0].type === 'ImportDefaultSpecifier') {
-      // import default, { named, imports }
-      const loc = specifiers[0].loc
-      const importLength = loc.end.column - loc.start.column
-      // ',' + space = 2 characters
-      changeLocation.column[0] += importLength + 2
-    }
-    // dirty hack: assume 'import {...list} from module'
-    // 'import' + space = 7 characters
-    changeLocation.column[0] += 7
-    // space + 'from' + space = 6 characters
-    changeLocation.column[1] = expression.source.loc.start.column - 6
+  const { getLocation } = listEntities[expression.type]
+  if (getLocation) {
+    return getLocation(expression)
   }
 
-  return changeLocation
+  return getExpressionLocation(expression)
 }
