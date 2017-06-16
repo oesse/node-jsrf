@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint ./src",
     "lintfix": "eslint --fix ./src",
-    "prepare": "babel src -d lib",
+    "prepare": "rm -rf lib/* && babel src -d lib",
     "test": "mocha"
   },
   "author": "Oliver Esser",
