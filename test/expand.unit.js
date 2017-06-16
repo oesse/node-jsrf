@@ -138,4 +138,16 @@ describe('expand', () => {
       expect(diff.code).to.eql('{\n  foo\n}')
     })
   })
+
+  context('a destructuring assignment', () => {
+    it('puts variable on a line of its own', () => {
+      const sourceCode = 'const { foo } = bar'
+      const charRange = [6, 6]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([6, 13])
+      expect(diff.code).to.eql('{\n  foo\n}')
+    })
+  })
 })

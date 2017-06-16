@@ -5,6 +5,10 @@ const listEntities = {
     delimiters: ['{', '}'],
     elementProperty: 'properties'
   },
+  ObjectPattern: {
+    delimiters: ['{', '}'],
+    elementProperty: 'properties'
+  },
   ArrayExpression: {
     delimiters: ['[', ']'],
     elementProperty: 'elements'
