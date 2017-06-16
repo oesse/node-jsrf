@@ -43,6 +43,7 @@ function getNodeStack (ast, start, end) {
   const typesToVisit = [
     'Expression',
     'ImportDeclaration',
+    'ExportNamedDeclaration',
     'ObjectPattern',
     'ArrayPattern'
   ]

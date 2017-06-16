@@ -139,6 +139,18 @@ describe('expand', () => {
     })
   })
 
+  context('an passthrough export', () => {
+    it('puts export on a line of its own', () => {
+      const sourceCode = 'export { foo } from \'module\''
+      const charRange = [7, 7]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([7, 14])
+      expect(diff.code).to.eql('{\n  foo\n}')
+    })
+  })
+
   context('a destructuring assignment', () => {
     it('puts property name on a line of its own', () => {
       const sourceCode = 'const { foo } = bar'

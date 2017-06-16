@@ -1,22 +1,19 @@
 import { getExpressionLocation } from './parse'
 
+const objectLikeEntity = {
+  delimiters: ['{', '}'],
+  elementProperty: 'properties'
+}
+const arrayLikeEntity = {
+  delimiters: ['[', ']'],
+  elementProperty: 'elements'
+}
+
 const listEntities = {
-  ObjectExpression: {
-    delimiters: ['{', '}'],
-    elementProperty: 'properties'
-  },
-  ObjectPattern: {
-    delimiters: ['{', '}'],
-    elementProperty: 'properties'
-  },
-  ArrayExpression: {
-    delimiters: ['[', ']'],
-    elementProperty: 'elements'
-  },
-  ArrayPattern: {
-    delimiters: ['[', ']'],
-    elementProperty: 'elements'
-  },
+  ObjectExpression: objectLikeEntity,
+  ObjectPattern: objectLikeEntity,
+  ArrayExpression: arrayLikeEntity,
+  ArrayPattern: arrayLikeEntity,
   CallExpression: {
     delimiters: ['(', ')'],
     elementProperty: 'arguments',
@@ -44,6 +41,19 @@ const listEntities = {
       }
       // dirty hack: assume 'import {...list} from module'
       // 'import' + space = 7 characters
+      location.column[0] += 7
+      // space + 'from' + space = 6 characters
+      location.column[1] = expr.source.loc.start.column - 6
+      return location
+    }
+  },
+  ExportNamedDeclaration: {
+    delimiters: ['{', '}'],
+    elementProperty: 'specifiers',
+    getLocation (expr) {
+      const location = getExpressionLocation(expr)
+      // dirty hack #2: assume 'export {...list} from module'
+      // 'export' + space = 7 characters
       location.column[0] += 7
       // space + 'from' + space = 6 characters
       location.column[1] = expr.source.loc.start.column - 6
