@@ -40,7 +40,12 @@ function nodeStackOfExpression (ast, start, end) {
     return visitor
   }
 
-  const typesToVisit = ['Expression', 'ImportDeclaration', 'ObjectPattern']
+  const typesToVisit = [
+    'Expression',
+    'ImportDeclaration',
+    'ObjectPattern',
+    'ArrayPattern'
+  ]
   const visitor = makeVisitor(typesToVisit, start, end)
 
   const found = {}

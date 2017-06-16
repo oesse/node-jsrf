@@ -13,6 +13,10 @@ const listEntities = {
     delimiters: ['[', ']'],
     elementProperty: 'elements'
   },
+  ArrayPattern: {
+    delimiters: ['[', ']'],
+    elementProperty: 'elements'
+  },
   CallExpression: {
     delimiters: ['(', ')'],
     elementProperty: 'arguments',
