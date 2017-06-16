@@ -17,13 +17,13 @@ export function parse (sourceCode) {
 export function parseCallStack (sourceCode, charRange) {
   const [start, end] = charRange
   const ast = parse(sourceCode)
-  const stack = nodeStackOfExpression(ast, start, end)
+  const stack = getNodeStack(ast, start, end)
   const enclIdx = stack.findIndex(node => !!node.body)
   const attachedAt = stack[enclIdx].body.find(node => node === stack[enclIdx - 1])
   return { stack, attachedAt }
 }
 
-function nodeStackOfExpression (ast, start, end) {
+function getNodeStack (ast, start, end) {
   const makeVisitor = (nodeTypes, start, end) => {
     let found = false
 
