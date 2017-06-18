@@ -21,7 +21,7 @@ export function parseCallStack (sourceCode, charRange) {
   const [start, end] = charRange
   const ast = parse(sourceCode)
   const stack = getNodeStack(ast, start, end)
-  const enclIdx = stack.findIndex(node => !!node.body)
+  const enclIdx = stack.findIndex(node => node.type !== 'ArrowFunctionExpression' && !!node.body)
   const attachedAt = stack[enclIdx].body.find(node => node === stack[enclIdx - 1])
   return { stack, attachedAt }
 }

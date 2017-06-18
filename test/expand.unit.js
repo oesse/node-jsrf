@@ -113,6 +113,16 @@ describe('expand', () => {
       expect(diff.column).to.eql([15, 21])
       expect(diff.code).to.eql('(\n  a,\n  b\n)')
     })
+
+    it('expands arguments of arrow function', () => {
+      const sourceCode = 'callMeLater((foo, bar) => foo + bar)'
+      const charRange = [12, 12]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([12, 22])
+      expect(diff.code).to.eql('(\n  foo,\n  bar\n)')
+    })
   })
 
   context('an import statement', () => {

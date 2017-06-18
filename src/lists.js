@@ -26,6 +26,20 @@ const listEntities = {
       return location
     }
   },
+  ArrowFunctionExpression: {
+    delimiters: ['(', ')'],
+    elementProperty: 'params',
+    getLocation (expr) {
+      // Arguments start after parens
+      const location = getExpressionLocation(expr.params[0])
+      const firstArgument = expr.params[0].loc.start.column
+      const lastArgument = expr.params[expr.params.length - 1].loc.end.column
+      // remove argument list left paren
+      const startColumn = firstArgument - 1
+      const endColumn = lastArgument + 1
+      return { ...location, column: [startColumn, endColumn] }
+    }
+  },
   ImportDeclaration: {
     delimiters: ['{', '}'],
     elementProperty: 'specifiers',
