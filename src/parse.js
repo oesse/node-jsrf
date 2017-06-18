@@ -1,5 +1,5 @@
 import * as walk from 'acorn/dist/walk'
-import * as acorn from 'acorn'
+import * as acorn from 'acorn-object-spread'
 import acornEs7Plugin from 'acorn-es7-plugin'
 
 acornEs7Plugin(acorn)
@@ -8,7 +8,10 @@ export function parse (sourceCode) {
   const ast = acorn.parse(sourceCode, {
     locations: true,
     sourceType: 'module',
-    plugins: { asyncawait: true },
+    plugins: {
+      objectSpread: true,
+      asyncawait: true
+    },
     ecmaVersion: 8
   })
   return ast
@@ -50,7 +53,12 @@ function getNodeStack (ast, start, end) {
   const visitor = makeVisitor(typesToVisit, start, end)
 
   const found = {}
-  walk.ancestor(ast, visitor, walk.base, found)
+  walk.ancestor(
+    ast,
+    visitor,
+    { ...walk.base, SpreadProperty: (node, st, c) => c(node.argument, st, 'Expression') },
+    found
+  )
 
   found.ancestors.reverse()
   return found.ancestors

@@ -49,6 +49,16 @@ describe('expand', () => {
       expect(diff.column).to.eql([2, 12])
       expect(diff.code).to.eql('{\n    a: \'a\'\n  }')
     })
+
+    it('expands literal containing object spread operator', () => {
+      const sourceCode = 'foo({ ...bar, a: \'a\' })'
+      const charRange = [4, 4]
+      const diff = expand(sourceCode, charRange)
+
+      expect(diff.line).to.eql([1, 1])
+      expect(diff.column).to.eql([4, 22])
+      expect(diff.code).to.eql('{\n  ...bar,\n  a: \'a\'\n}')
+    })
   })
 
   context('an array literal', () => {
