@@ -1,8 +1,10 @@
 import * as walk from 'acorn/dist/walk'
 import * as acorn from 'acorn-object-spread'
 import acornEs7Plugin from 'acorn-es7-plugin'
+import acornJsxPlugin from 'acorn-jsx/inject'
 
 acornEs7Plugin(acorn)
+acornJsxPlugin(acorn)
 
 export function parse (sourceCode) {
   const ast = acorn.parse(sourceCode, {
@@ -10,7 +12,8 @@ export function parse (sourceCode) {
     sourceType: 'module',
     plugins: {
       objectSpread: true,
-      asyncawait: true
+      asyncawait: true,
+      jsx: true
     },
     ecmaVersion: 8
   })
