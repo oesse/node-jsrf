@@ -59,7 +59,11 @@ function getNodeStack (ast, start, end) {
   walk.ancestor(
     ast,
     visitor,
-    { ...walk.base, SpreadProperty: (node, st, c) => c(node.argument, st, 'Expression') },
+    {
+      ...walk.base,
+      SpreadProperty: (node, st, c) => c(node.argument, st, 'Expression'),
+      JSXElement: () => {}
+    },
     found
   )
 

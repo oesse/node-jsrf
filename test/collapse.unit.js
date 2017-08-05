@@ -47,6 +47,14 @@ describe('collapse', () => {
 
       expect(diff).to.have.property('code', '{ a: \'a\', b: \'b\' }')
     })
+
+    it('works with jsx', () => {
+      const sourceCode = 'function component() {\n  const foo = {\n    a: \'a\'\n  }\nreturn <div />\n}'
+      const charRange = [45, 45]
+      const diff = collapse(sourceCode, charRange)
+
+      expect(diff).to.have.property('code', '{ a: \'a\' }')
+    })
   })
 
   context('an array literal', () => {
