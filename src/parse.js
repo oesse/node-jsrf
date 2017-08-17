@@ -1,17 +1,23 @@
 import * as walk from 'acorn/dist/walk'
-import * as acorn from 'acorn-object-spread'
+import * as acorn from 'acorn'
+import acornObjectSpreadPlugin from 'acorn-object-rest-spread/inject'
 import acornEs7Plugin from 'acorn-es7-plugin'
 import acornJsxPlugin from 'acorn-jsx/inject'
 
-acornEs7Plugin(acorn)
-acornJsxPlugin(acorn)
+const flow = fns => data => fns.reduce((v, fn) => fn(v), data)
+
+const parser = flow([
+  acornObjectSpreadPlugin,
+  acornEs7Plugin,
+  acornJsxPlugin
+])(acorn)
 
 export function parse (sourceCode) {
-  const ast = acorn.parse(sourceCode, {
+  const ast = parser.parse(sourceCode, {
     locations: true,
     sourceType: 'module',
     plugins: {
-      objectSpread: true,
+      objectRestSpread: true,
       asyncawait: true,
       jsx: true
     },
