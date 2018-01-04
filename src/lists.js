@@ -2,11 +2,11 @@ import { getExpressionLocation } from './parse'
 
 const objectLikeEntity = {
   delimiters: ['{', '}'],
-  elementProperty: 'properties'
+  getElementProperty: node => node.properties
 }
 const arrayLikeEntity = {
   delimiters: ['[', ']'],
-  elementProperty: 'elements'
+  getElementProperty: node => node.elements
 }
 
 const listEntities = {
@@ -16,7 +16,7 @@ const listEntities = {
   ArrayPattern: arrayLikeEntity,
   CallExpression: {
     delimiters: ['(', ')'],
-    elementProperty: 'arguments',
+    getElementProperty: node => node.arguments,
     getLocation (expr) {
       // Arguments start right after callee identifier.
       const location = getExpressionLocation(expr)
@@ -28,7 +28,7 @@ const listEntities = {
   },
   ArrowFunctionExpression: {
     delimiters: ['(', ')'],
-    elementProperty: 'params',
+    getElementProperty: node => node.params,
     getLocation (expr) {
       // Arguments start after parens
       const location = getExpressionLocation(expr.params[0])
@@ -42,7 +42,7 @@ const listEntities = {
   },
   ImportDeclaration: {
     delimiters: ['{', '}'],
-    elementProperty: 'specifiers',
+    getElementProperty: node => node.specifiers,
     getLocation (expr) {
       const location = getExpressionLocation(expr)
       const specifiers = expr.specifiers
@@ -63,7 +63,7 @@ const listEntities = {
   },
   ExportNamedDeclaration: {
     delimiters: ['{', '}'],
-    elementProperty: 'specifiers',
+    getElementProperty: node => node.specifiers,
     getLocation (expr) {
       const location = getExpressionLocation(expr)
       // dirty hack #2: assume 'export {...list} from module'
@@ -73,7 +73,19 @@ const listEntities = {
       location.column[1] = expr.source.loc.start.column - 6
       return location
     }
-  }
+  },
+  JSXElement: {
+    delimiters: ['', '/>'],
+    getElementProperty: node => node.openingElement.attributes,
+    getLocation (expr) {
+      const attributes = expr.openingElement.attributes
+      const location = getExpressionLocation(attributes[0])
+      const { line, column } = expr.loc.end
+      location.line[1] = line
+      location.column[1] = column - 2 // strip self closing tag '/>'
+      return location
+    }
+  },
 }
 
 export function isListExpression (node) {
@@ -91,8 +103,8 @@ export function getElements (expression, sourceCode) {
 }
 
 export function getElementProperty (expression) {
-  const { elementProperty } = listEntities[expression.type]
-  return expression[elementProperty]
+  const { getElementProperty: get } = listEntities[expression.type]
+  return get(expression)
 }
 
 export function getDelimiters (expression) {
