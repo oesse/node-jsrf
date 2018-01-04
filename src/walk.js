@@ -15,7 +15,7 @@ const JsxContinuations = {
 }
 
 export default (ast, visitor) => {
-  const found = {}
+  const walkingState = {}
   walk.ancestor(
     ast,
     visitor,
@@ -24,7 +24,7 @@ export default (ast, visitor) => {
       ...JsxContinuations,
       SpreadProperty: (node, st, c) => c(node.argument, st, 'Expression'),
     },
-    found
+    walkingState
   )
-  return found.ancestors
+  return walkingState.ancestors
 }
