@@ -1,8 +1,9 @@
-import * as walk from 'acorn/dist/walk'
 import * as acorn from 'acorn'
 import acornObjectSpreadPlugin from 'acorn-object-rest-spread/inject'
 import acornEs7Plugin from 'acorn-es7-plugin'
 import acornJsxPlugin from 'acorn-jsx/inject'
+
+import walk from './walk'
 
 const flow = fns => data => fns.reduce((v, fn) => fn(v), data)
 
@@ -61,20 +62,7 @@ function getNodeStack (ast, start, end) {
   ]
   const visitor = makeVisitor(typesToVisit, start, end)
 
-  const found = {}
-  walk.ancestor(
-    ast,
-    visitor,
-    {
-      ...walk.base,
-      SpreadProperty: (node, st, c) => c(node.argument, st, 'Expression'),
-      JSXElement: () => {}
-    },
-    found
-  )
-
-  found.ancestors.reverse()
-  return found.ancestors
+  return walk(ast, visitor).reverse()
 }
 
 export function getExpressionLocation (expr) {
