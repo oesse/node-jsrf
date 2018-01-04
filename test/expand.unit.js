@@ -200,9 +200,9 @@ describe('expand', () => {
         const charRange = [6, 6]
         const diff = expand(sourceCode, charRange)
 
-        expect(diff.line).to.eql([1, 1])
-        expect(diff.column).to.eql([11, 21])
         expect(diff.code).to.eql('\n  foo="bar"\n/>')
+        expect(diff.line).to.eql([1, 1])
+        expect(diff.column).to.eql([11, 23])
       })
     })
 
@@ -213,7 +213,7 @@ describe('expand', () => {
         const diff = expand(sourceCode, charRange)
 
         expect(diff.line).to.eql([1, 1])
-        expect(diff.column).to.eql([11, 20])
+        expect(diff.column).to.eql([11, 21])
         expect(diff.code).to.eql('\n  foo="bar"\n>')
       })
     })

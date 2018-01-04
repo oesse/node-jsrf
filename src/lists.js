@@ -83,9 +83,9 @@ const listEntities = {
       if (expr.openingElement.selfClosing) {
         const { line, column } = expr.loc.end
         location.line[1] = line
-        location.column[1] = column - 2 // strip self closing tag '/>'
+        location.column[1] = column // strip self closing tag '/>'
       } else {
-        const { line, column } = attributes[attributes.length - 1].loc.end
+        const { line, column } = expr.openingElement.loc.end
         location.line[1] = line
         location.column[1] = column // strip self closing tag '/>'
       }
