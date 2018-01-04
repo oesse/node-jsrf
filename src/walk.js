@@ -1,5 +1,19 @@
 import * as walk from 'acorn/dist/walk'
 
+const JsxContinuations = {
+  JSXAttribute: (node, st, c) => node.argument && c(node.argument.value, st, 'Expression'),
+  JSXExpressionContainer: (node, st, c) => c(node.expression, st, 'Expression'),
+  JSXEmptyExpression: () => {},
+  JSXElement: (node, st, c) => {
+    for (const attribute of node.openingElement.attributes) {
+      c(attribute, st, 'JSXAttribute') 
+    }
+    for (const child of node.children) { 
+      if (child.type !== 'JSXText') { c(child, st, 'Expression') }
+    }
+  },
+}
+
 export default (ast, visitor) => {
   const found = {}
   walk.ancestor(
@@ -7,18 +21,8 @@ export default (ast, visitor) => {
     visitor,
     {
       ...walk.base,
+      ...JsxContinuations,
       SpreadProperty: (node, st, c) => c(node.argument, st, 'Expression'),
-      JSXAttribute: (node, st, c) => node.argument && c(node.argument.value, st, 'Expression'),
-      JSXExpressionContainer: (node, st, c) => c(node.expression, st, 'Expression'),
-      JSXEmptyExpression: () => {},
-      JSXElement: (node, st, c) => {
-        for (const attribute of node.openingElement.attributes) {
-          c(attribute, st, 'JSXAttribute') 
-        }
-        for (const child of node.children) { 
-          if (child.type !== 'JSXText') { c(child, st, 'Expression') }
-        }
-      },
     },
     found
   )
