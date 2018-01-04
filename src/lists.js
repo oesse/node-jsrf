@@ -2,11 +2,11 @@ import { getExpressionLocation } from './parse'
 
 const objectLikeEntity = {
   delimiters: ['{', '}'],
-  getElementProperty: node => node.properties
+  listProperty: 'properties'
 }
 const arrayLikeEntity = {
   delimiters: ['[', ']'],
-  getElementProperty: node => node.elements
+  listProperty: 'elements'
 }
 
 const listEntities = {
@@ -16,7 +16,7 @@ const listEntities = {
   ArrayPattern: arrayLikeEntity,
   CallExpression: {
     delimiters: ['(', ')'],
-    getElementProperty: node => node.arguments,
+    listProperty: 'arguments',
     getLocation (expr) {
       // Arguments start right after callee identifier.
       const location = getExpressionLocation(expr)
@@ -28,7 +28,7 @@ const listEntities = {
   },
   ArrowFunctionExpression: {
     delimiters: ['(', ')'],
-    getElementProperty: node => node.params,
+    listProperty: 'params',
     getLocation (expr) {
       // Arguments start after parens
       const location = getExpressionLocation(expr.params[0])
@@ -42,7 +42,7 @@ const listEntities = {
   },
   ImportDeclaration: {
     delimiters: ['{', '}'],
-    getElementProperty: node => node.specifiers,
+    listProperty: 'specifiers',
     getLocation (expr) {
       const location = getExpressionLocation(expr)
       const specifiers = expr.specifiers
@@ -63,7 +63,7 @@ const listEntities = {
   },
   ExportNamedDeclaration: {
     delimiters: ['{', '}'],
-    getElementProperty: node => node.specifiers,
+    listProperty: 'specifiers',
     getLocation (expr) {
       const location = getExpressionLocation(expr)
       // dirty hack #2: assume 'export {...list} from module'
@@ -76,7 +76,7 @@ const listEntities = {
   },
   JSXElement: {
     delimiters: node => node.openingElement.selfClosing ? ['', '/>'] : ['', '>'],
-    getElementProperty: node => node.openingElement.attributes,
+    listProperty: node => node.openingElement.attributes,
     getLocation (expr) {
       const attributes = expr.openingElement.attributes
       const location = getExpressionLocation(attributes[0])
@@ -110,8 +110,9 @@ export function getElements (expression, sourceCode) {
 }
 
 export function getElementProperty (expression) {
-  const { getElementProperty: get } = listEntities[expression.type]
-  return get(expression)
+  const { listProperty } = listEntities[expression.type]
+  if (typeof listProperty === 'function') { return listProperty(expression) }
+  return expression[listProperty]
 }
 
 export function getDelimiters (expression) {
