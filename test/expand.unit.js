@@ -194,14 +194,28 @@ describe('expand', () => {
   })
 
   context('a jsx tag with attributes', () => {
-    it('puts each attribute on a line of its own', () => {
-      const sourceCode = '<Component foo="bar" />'
-      const charRange = [6, 6]
-      const diff = expand(sourceCode, charRange)
+    context('which is self closing', () => {
+      it('puts each attribute on a line of its own', () => {
+        const sourceCode = '<Component foo="bar" />'
+        const charRange = [6, 6]
+        const diff = expand(sourceCode, charRange)
 
-      expect(diff.line).to.eql([1, 1])
-      expect(diff.column).to.eql([11, 21])
-      expect(diff.code).to.eql('\n  foo="bar"\n/>')
+        expect(diff.line).to.eql([1, 1])
+        expect(diff.column).to.eql([11, 21])
+        expect(diff.code).to.eql('\n  foo="bar"\n/>')
+      })
+    })
+
+    context('which has a closing tag', () => {
+      it('puts each attribute on a line of its own', () => {
+        const sourceCode = '<Component foo="bar"><Child /></Component>'
+        const charRange = [6, 6]
+        const diff = expand(sourceCode, charRange)
+
+        expect(diff.line).to.eql([1, 1])
+        expect(diff.column).to.eql([11, 20])
+        expect(diff.code).to.eql('\n  foo="bar"\n>')
+      })
     })
   })
 })

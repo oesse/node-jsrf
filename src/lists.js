@@ -75,14 +75,21 @@ const listEntities = {
     }
   },
   JSXElement: {
-    delimiters: ['', '/>'],
+    delimiters: node => node.openingElement.selfClosing ? ['', '/>'] : ['', '>'],
     getElementProperty: node => node.openingElement.attributes,
     getLocation (expr) {
       const attributes = expr.openingElement.attributes
       const location = getExpressionLocation(attributes[0])
-      const { line, column } = expr.loc.end
-      location.line[1] = line
-      location.column[1] = column - 2 // strip self closing tag '/>'
+      if (expr.openingElement.selfClosing) {
+        const { line, column } = expr.loc.end
+        location.line[1] = line
+        location.column[1] = column - 2 // strip self closing tag '/>'
+      } else {
+        const { line, column } = attributes[attributes.length - 1].loc.end
+        location.line[1] = line
+        location.column[1] = column // strip self closing tag '/>'
+      }
+
       return location
     }
   },
@@ -109,6 +116,7 @@ export function getElementProperty (expression) {
 
 export function getDelimiters (expression) {
   const { delimiters } = listEntities[expression.type]
+  if (typeof delimiters === 'function') { return delimiters(expression) }
   return delimiters
 }
 
