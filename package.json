@@ -10,7 +10,9 @@
     "lint": "eslint ./src",
     "lintfix": "eslint --fix ./src",
     "prepare": "rm -rf lib/* && babel src -d lib",
-    "test": "mocha"
+    "test": "yarn -s utest && yarn -s itest",
+    "utest": "mocha",
+    "itest": "mocha tools/itest.js"
   },
   "author": "Oliver Esser",
   "license": "ISC",
