@@ -9,6 +9,8 @@ function loadIntegrationTest (path) {
   const lines = spec.split('\n')
 
   const givenStart = lines.findIndex(line => /^\/\/ Given/.test(line))
+  const hasOnly = /Given only/.test(lines[givenStart])
+  const hasSkip = /Given skip/.test(lines[givenStart])
   const doStart = lines.findIndex(line => /^\/\/ Do/.test(line))
   const expectStart = lines.findIndex(line => /^\/\/ Expect/.test(line))
 
@@ -24,12 +26,15 @@ function loadIntegrationTest (path) {
     expectation,
     sourceCode,
     command,
-    expectedCode
+    expectedCode,
+    hasOnly,
+    hasSkip
   }
 }
 
 function evaluateInContext (command, testContext) {
-  return function () { return eval(command) }.call(testContext)
+  // eslint-disable-next-line no-eval
+  return (function () { return eval(command) }.call(testContext))
 }
 
 function runCommand (command, sourceCode) {
@@ -47,10 +52,20 @@ function runTestCase (sourceCode, command, expectedCode) {
 }
 
 function registerTestCase (path) {
-  const { sourceCode, command, expectedCode, description, expectation } = loadIntegrationTest(path)
+  const {
+    sourceCode,
+    command,
+    expectedCode,
+    description,
+    expectation,
+    hasOnly,
+    hasSkip
+  } = loadIntegrationTest(path)
+
+  const testCaseIt = hasOnly ? it.only : hasSkip ? it.skip : it
 
   context(description, () => {
-    it(expectation, () => {
+    testCaseIt(expectation, () => {
       runTestCase(sourceCode, command, expectedCode)
     })
   })
