@@ -78,21 +78,24 @@ const listEntities = {
     delimiters: node => node.openingElement.selfClosing ? ['', '/>'] : ['', '>'],
     listProperty: node => node.openingElement.attributes,
     getLocation (expr) {
-      const attributes = expr.openingElement.attributes
-      const location = getExpressionLocation(attributes[0])
-      if (expr.openingElement.selfClosing) {
-        const { line, column } = expr.loc.end
-        location.line[1] = line
-        location.column[1] = column // strip self closing tag '/>'
+      const { openingElement } = expr
+      if (openingElement.selfClosing) {
+        return setLocationFromEnds(openingElement.name, expr)
       } else {
-        const { line, column } = expr.openingElement.loc.end
-        location.line[1] = line
-        location.column[1] = column // strip self closing tag '/>'
+        return setLocationFromEnds(openingElement.name, openingElement)
       }
-
-      return location
     }
-  },
+  }
+}
+
+function setLocationFromEnds (startExpr, endExpr) {
+  const { line: startLine, column: startColumn } = startExpr.loc.end
+  const { line: endLine, column: endColumn } = endExpr.loc.end
+  const newLocation = {
+    line: [startLine, endLine],
+    column: [startColumn, endColumn]
+  }
+  return newLocation
 }
 
 export function isListExpression (node) {
