@@ -1,11 +1,11 @@
 import { getExpressionLocation } from './parse'
 
 const objectLikeEntity = {
-  delimiters: ['{', '}'],
+  delimiters: ['{', '}', ','],
   listProperty: 'properties'
 }
 const arrayLikeEntity = {
-  delimiters: ['[', ']'],
+  delimiters: ['[', ']', ','],
   listProperty: 'elements'
 }
 
@@ -15,7 +15,7 @@ const listEntities = {
   ArrayExpression: arrayLikeEntity,
   ArrayPattern: arrayLikeEntity,
   CallExpression: {
-    delimiters: ['(', ')'],
+    delimiters: ['(', ')', ','],
     listProperty: 'arguments',
     getLocation (expr) {
       // Arguments start right after callee identifier.
@@ -27,7 +27,7 @@ const listEntities = {
     }
   },
   ArrowFunctionExpression: {
-    delimiters: ['(', ')'],
+    delimiters: ['(', ')', ','],
     listProperty: 'params',
     getLocation (expr) {
       // Arguments start after parens
@@ -41,7 +41,7 @@ const listEntities = {
     }
   },
   ImportDeclaration: {
-    delimiters: ['{', '}'],
+    delimiters: ['{', '}', ','],
     listProperty: 'specifiers',
     getLocation (expr) {
       const location = getExpressionLocation(expr)
@@ -62,7 +62,7 @@ const listEntities = {
     }
   },
   ExportNamedDeclaration: {
-    delimiters: ['{', '}'],
+    delimiters: ['{', '}', ','],
     listProperty: 'specifiers',
     getLocation (expr) {
       const location = getExpressionLocation(expr)
@@ -75,7 +75,7 @@ const listEntities = {
     }
   },
   JSXElement: {
-    delimiters: node => node.openingElement.selfClosing ? ['', '/>'] : ['', '>'],
+    delimiters: node => node.openingElement.selfClosing ? ['', '/>', ''] : ['', '>', ''],
     listProperty: node => node.openingElement.attributes,
     getLocation (expr) {
       const { openingElement } = expr

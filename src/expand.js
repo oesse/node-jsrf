@@ -1,18 +1,18 @@
 import { parseCallStack } from './parse'
 import { isListExpression, getElements, getDelimiters, getListLocation } from './lists'
 
-function paddedCommaList (offset, list) {
+function paddedCommaList (offset, separator, list) {
   const padding = ' '.repeat(offset)
   const padded = e => `${padding}${e}`
-  const commad = e => `${e},`
+  const separated = e => `${e}${separator}`
   const last = list[list.length - 1]
-  return [...list.slice(0, -1).map(e => padded(commad(e))), padded(last)]
+  return [...list.slice(0, -1).map(e => padded(separated(e))), padded(last)]
 }
 
 function expandElements (expression, sourceCode) {
-  const [leftDelim, rightDelim] = getDelimiters(expression)
+  const [leftDelim, rightDelim, separator] = getDelimiters(expression)
   const keys = getElements(expression, sourceCode)
-  return [leftDelim, ...paddedCommaList(2, keys), rightDelim]
+  return [leftDelim, ...paddedCommaList(2, separator, keys), rightDelim]
 }
 
 function getColumnOffset (stack, idx) {
