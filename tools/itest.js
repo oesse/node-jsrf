@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { expect } from 'chai'
 
-import { expand } from '../src'
+import { collapse, expand } from '../src'
 import applyChangeset from '../src/apply-changeset'
 
 function loadIntegrationTest (path) {
@@ -39,7 +39,8 @@ function evaluateInContext (command, testContext) {
 
 function runCommand (command, sourceCode) {
   const testContext = {
-    expand: (...args) => expand(sourceCode, ...args)
+    expand: (...args) => expand(sourceCode, ...args),
+    collapse: (...args) => collapse(sourceCode, ...args)
   }
 
   const changeSet = evaluateInContext(`this.${command}`, testContext)
@@ -96,4 +97,5 @@ function registerTestSuite (suiteName, basePath) {
 
 describe('integration tests', () => {
   registerTestSuite('expand', 'test/integration/expand')
+  registerTestSuite('collapse', 'test/integration/collapse')
 })

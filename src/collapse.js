@@ -6,8 +6,8 @@ export function collapse (sourceCode, charRange) {
 
   const expression = stack.find(isListExpression)
 
-  const [left, right] = getDelimiters(expression)
-  const elements = getElements(expression, sourceCode).join(', ')
+  const [left, right, separator] = getDelimiters(expression)
+  const elements = getElements(expression, sourceCode).join(`${separator} `)
   let collapsedCode = `${left} ${elements} ${right}`
 
   const changeLocation = getListLocation(expression)
